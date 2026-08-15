@@ -1,0 +1,12 @@
+<%- include('../partials/header') %>
+
+<!-- TODO (team): render event details and a booking form when `event` is populated -->
+<% if (event) { %>
+  <h1><%= event.title %></h1>
+  <p><%= event.description %></p>
+  <!-- TODO (team): booking form posting to /bookings, guarded to logged-in users -->
+<% } else { %>
+  <p class="text-muted">Event not found.</p>
+<% } %>
+
+<%- include('../partials/footer') %>

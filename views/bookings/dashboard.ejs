@@ -1,0 +1,27 @@
+<%- include('../partials/header') %>
+
+<h1>Dashboard</h1>
+
+<!-- TODO (team): if currentUser.role === 'admin', show analytics (total bookings, popular events, capacity usage) -->
+<!-- TODO (team): otherwise show the logged-in user's own booking history from `bookings` -->
+
+<table class="table">
+  <thead>
+    <tr><th>Event</th><th>Quantity</th><th>Booked On</th></tr>
+  </thead>
+  <tbody>
+    <% if (bookings && bookings.length) { %>
+      <% bookings.forEach(function(booking) { %>
+        <tr>
+          <td><%= booking.event %></td>
+          <td><%= booking.quantity %></td>
+          <td><%= booking.createdAt %></td>
+        </tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="3" class="text-muted">No bookings yet.</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include('../partials/footer') %>

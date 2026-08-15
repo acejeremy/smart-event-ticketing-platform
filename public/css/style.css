@@ -1,0 +1,13 @@
+/* TODO (team): customize styling — this is just a base to build on top of Bootstrap */
+
+body {
+  min-height: 100vh;
+}
+
+.card {
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,26 @@
+<%- include('../partials/header') %>
+
+<h1>Enquiries</h1>
+
+<!-- TODO (team): loop over `enquiries`, allow admin to mark as read/resolved -->
+<table class="table">
+  <thead>
+    <tr><th>Name</th><th>Email</th><th>Message</th><th>Received</th></tr>
+  </thead>
+  <tbody>
+    <% if (enquiries && enquiries.length) { %>
+      <% enquiries.forEach(function(enquiry) { %>
+        <tr>
+          <td><%= enquiry.name %></td>
+          <td><%= enquiry.email %></td>
+          <td><%= enquiry.message %></td>
+          <td><%= enquiry.createdAt %></td>
+        </tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="4" class="text-muted">No enquiries yet.</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,22 @@
+<%- include('../partials/header') %>
+
+<h1>Contact Us</h1>
+
+<!-- TODO (team): wire this up to contactController.submitEnquiry -->
+<form method="POST" action="/contact" class="col-md-6">
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input type="text" name="name" class="form-control" required />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Email</label>
+    <input type="email" name="email" class="form-control" required />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Message</label>
+    <textarea name="message" class="form-control" required></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Send Enquiry</button>
+</form>
+
+<%- include('../partials/footer') %>
