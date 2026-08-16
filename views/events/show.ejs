@@ -14,7 +14,33 @@
       <span class="text-danger">Sold out</span>
     <% } %>
   </p>
-  <!-- TODO (step 5): booking form posting to /bookings, guarded to logged-in users -->
+
+  <% if (typeof bookingError !== 'undefined' && bookingError) { %>
+    <div class="alert alert-danger"><%= bookingError %></div>
+  <% } %>
+
+  <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+    <% if (event.remainingTickets > 0) { %>
+      <form method="POST" action="/bookings" class="col-md-4">
+        <input type="hidden" name="eventId" value="<%= event._id %>" />
+        <div class="mb-3">
+          <label class="form-label">Number of tickets</label>
+          <input
+            type="number"
+            name="quantity"
+            class="form-control"
+            min="1"
+            max="<%= event.remainingTickets %>"
+            value="1"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-success">Book Tickets</button>
+      </form>
+    <% } %>
+  <% } else { %>
+    <p><a href="/auth/login">Log in</a> to book tickets.</p>
+  <% } %>
 <% } else { %>
   <p class="text-muted">Event not found.</p>
 <% } %>

@@ -2,26 +2,73 @@
 
 <h1>Dashboard</h1>
 
-<!-- TODO (team): if currentUser.role === 'admin', show analytics (total bookings, popular events, capacity usage) -->
-<!-- TODO (team): otherwise show the logged-in user's own booking history from `bookings` -->
+<% if (analytics) { %>
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-subtitle text-muted">Total Bookings</h6>
+          <p class="fs-3 mb-0"><%= analytics.totalBookings %></p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<table class="table">
-  <thead>
-    <tr><th>Event</th><th>Quantity</th><th>Booked On</th></tr>
-  </thead>
-  <tbody>
-    <% if (bookings && bookings.length) { %>
-      <% bookings.forEach(function(booking) { %>
-        <tr>
-          <td><%= booking.event %></td>
-          <td><%= booking.quantity %></td>
-          <td><%= booking.createdAt %></td>
-        </tr>
-      <% }); %>
-    <% } else { %>
-      <tr><td colspan="3" class="text-muted">No bookings yet.</td></tr>
-    <% } %>
-  </tbody>
-</table>
+  <h2 class="h4">Most Popular Events</h2>
+  <table class="table mb-4">
+    <thead><tr><th>Event</th><th>Tickets Booked</th></tr></thead>
+    <tbody>
+      <% if (analytics.popularEvents.length) { %>
+        <% analytics.popularEvents.forEach(function(row) { %>
+          <tr><td><%= row.title %></td><td><%= row.ticketsBooked %></td></tr>
+        <% }); %>
+      <% } else { %>
+        <tr><td colspan="2" class="text-muted">No bookings yet.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <h2 class="h4">Capacity Usage</h2>
+  <table class="table">
+    <thead><tr><th>Event</th><th>Sold / Capacity</th><th>Usage</th></tr></thead>
+    <tbody>
+      <% if (analytics.capacityUsage.length) { %>
+        <% analytics.capacityUsage.forEach(function(event) { %>
+          <% const usagePct = Math.round((event.ticketsSold / event.capacity) * 100); %>
+          <tr>
+            <td><%= event.title %></td>
+            <td><%= event.ticketsSold %> / <%= event.capacity %></td>
+            <td>
+              <div class="progress" style="height: 1.25rem;">
+                <div class="progress-bar" style="width: <%= usagePct %>%;"><%= usagePct %>%</div>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+      <% } else { %>
+        <tr><td colspan="3" class="text-muted">No events yet.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+<% } else { %>
+  <table class="table">
+    <thead>
+      <tr><th>Event</th><th>Quantity</th><th>Booked On</th></tr>
+    </thead>
+    <tbody>
+      <% if (bookings && bookings.length) { %>
+        <% bookings.forEach(function(booking) { %>
+          <tr>
+            <td><%= booking.event ? booking.event.title : '(event deleted)' %></td>
+            <td><%= booking.quantity %></td>
+            <td><%= booking.createdAt.toDateString() %></td>
+          </tr>
+        <% }); %>
+      <% } else { %>
+        <tr><td colspan="3" class="text-muted">No bookings yet.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+<% } %>
 
 <%- include('../partials/footer') %>

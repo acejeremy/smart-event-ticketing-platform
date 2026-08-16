@@ -39,10 +39,10 @@ async function listEvents(req, res, next) {
 async function getEventDetails(req, res, next) {
   try {
     const event = await Event.findById(req.params.id);
-    res.render('events/show', { event });
+    res.render('events/show', { event, bookingError: req.query.bookingError });
   } catch (err) {
     if (err.name === 'CastError') {
-      return res.render('events/show', { event: null });
+      return res.render('events/show', { event: null, bookingError: null });
     }
     next(err);
   }
