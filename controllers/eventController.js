@@ -1,11 +1,34 @@
-// Home / Event Listing Page controller
-// TODO (team): implement each handler.
+const Event = require('../models/Event');
 
-// GET / — list all events, supporting search/filter query params
-// (?date=, ?category=, ?available=). Render views/events/index.ejs.
+// GET / — list upcoming events, supporting search/filter query params
+// (?category=, ?date=, ?available=). Render views/events/index.ejs.
 async function listEvents(req, res, next) {
   try {
-    res.render('events/index', { events: [] });
+    const { category, date, available } = req.query;
+    const filter = { date: { $gte: new Date() } };
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (date) {
+      const startOfDay = new Date(date);
+      const endOfDay = new Date(date);
+      endOfDay.setDate(endOfDay.getDate() + 1);
+      filter.date = { $gte: startOfDay, $lt: endOfDay };
+    }
+
+    if (available === 'true') {
+      filter.$expr = { $lt: ['$ticketsSold', '$capacity'] };
+    }
+
+    const events = await Event.find(filter).sort({ date: 1 });
+
+    res.render('events/index', {
+      events,
+      categories: Event.CATEGORIES,
+      filters: req.query
+    });
   } catch (err) {
     next(err);
   }
@@ -15,8 +38,12 @@ async function listEvents(req, res, next) {
 // availability. Render views/events/show.ejs.
 async function getEventDetails(req, res, next) {
   try {
-    res.render('events/show', { event: null });
+    const event = await Event.findById(req.params.id);
+    res.render('events/show', { event });
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.render('events/show', { event: null });
+    }
     next(err);
   }
 }

@@ -1,21 +1,69 @@
 const mongoose = require('mongoose');
 
-// TODO (team): design the fields for this schema to satisfy "Event
-// Management" and "Home / Event Listing" from the brief. Think about:
-//   - title, description, category, date, location
-//   - capacity (total tickets) and how you'll derive/track remaining
-//     availability (e.g. a separate "ticketsSold" counter, or compute
-//     it from the Booking collection)
-//   - createdBy (ref to User, the admin who created it)
-//   - timestamps
-// Also decide what validation belongs here (required fields, min
-// capacity, date must be in the future, etc.) — that's part of the
-// Database Design marks.
+const CATEGORIES = ['Conference', 'Workshop', 'Festival', 'Private Event'];
+
 const eventSchema = new mongoose.Schema(
   {
-    // fields go here
+    title: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    category: {
+      type: String,
+      required: true,
+      enum: CATEGORIES
+    },
+    date: {
+      type: Date,
+      required: true,
+      validate: {
+        // Only enforced when the event is first created, so editing an
+        // event after its date has passed (e.g. fixing a typo) doesn't
+        // start failing validation.
+        validator: function isFutureDate(value) {
+          return this.isNew ? value > Date.now() : true;
+        },
+        message: 'Event date must be in the future.'
+      }
+    },
+    location: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    capacity: {
+      type: Number,
+      required: true,
+      min: 1
+    },
+    ticketsSold: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    }
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
 );
+
+eventSchema.virtual('remainingTickets').get(function remainingTickets() {
+  return this.capacity - this.ticketsSold;
+});
+
+eventSchema.statics.CATEGORIES = CATEGORIES;
 
 module.exports = mongoose.model('Event', eventSchema);
