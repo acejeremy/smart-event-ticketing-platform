@@ -2,13 +2,45 @@
 
 <h1>Edit Event</h1>
 
-<!-- TODO (team): wire this up to adminEventController.updateEvent, pre-fill values from `event` -->
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
 <% if (event) { %>
+  <% const dateValue = event.date instanceof Date ? event.date.toISOString().slice(0, 10) : (event.date || ''); %>
   <form method="POST" action="/admin/events/<%= event._id %>" class="col-md-6">
     <div class="mb-3">
       <label class="form-label">Title</label>
-      <input type="text" name="title" class="form-control" value="<%= event.title %>" required />
+      <input type="text" name="title" class="form-control" value="<%= event.title || '' %>" required />
     </div>
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea name="description" class="form-control" required><%= event.description || '' %></textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Category</label>
+      <select name="category" class="form-select" required>
+        <option value="">Select a category</option>
+        <% categories.forEach(function(cat) { %>
+          <option value="<%= cat %>" <%= event.category === cat ? 'selected' : '' %>><%= cat %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Date</label>
+      <input type="date" name="date" class="form-control" value="<%= dateValue %>" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Location</label>
+      <input type="text" name="location" class="form-control" value="<%= event.location || '' %>" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Capacity</label>
+      <input type="number" name="capacity" class="form-control" min="1" value="<%= event.capacity || '' %>" required />
+    </div>
+    <% if (typeof event.ticketsSold === 'number') { %>
+      <p class="text-muted">Tickets sold so far: <%= event.ticketsSold %> (reducing capacity below this isn't blocked here, so keep it in mind).</p>
+    <% } %>
     <button type="submit" class="btn btn-primary">Save Changes</button>
   </form>
 <% } else { %>

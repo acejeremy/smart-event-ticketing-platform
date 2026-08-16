@@ -2,23 +2,39 @@
 
 <h1>New Event</h1>
 
-<!-- TODO (team): wire this up to adminEventController.createEvent; add all fields your Event schema needs -->
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
 <form method="POST" action="/admin/events" class="col-md-6">
   <div class="mb-3">
     <label class="form-label">Title</label>
-    <input type="text" name="title" class="form-control" required />
+    <input type="text" name="title" class="form-control" value="<%= formData.title || '' %>" required />
   </div>
   <div class="mb-3">
     <label class="form-label">Description</label>
-    <textarea name="description" class="form-control"></textarea>
+    <textarea name="description" class="form-control" required><%= formData.description || '' %></textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Category</label>
+    <select name="category" class="form-select" required>
+      <option value="">Select a category</option>
+      <% categories.forEach(function(cat) { %>
+        <option value="<%= cat %>" <%= formData.category === cat ? 'selected' : '' %>><%= cat %></option>
+      <% }); %>
+    </select>
   </div>
   <div class="mb-3">
     <label class="form-label">Date</label>
-    <input type="date" name="date" class="form-control" required />
+    <input type="date" name="date" class="form-control" value="<%= formData.date || '' %>" required />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Location</label>
+    <input type="text" name="location" class="form-control" value="<%= formData.location || '' %>" required />
   </div>
   <div class="mb-3">
     <label class="form-label">Capacity</label>
-    <input type="number" name="capacity" class="form-control" min="1" required />
+    <input type="number" name="capacity" class="form-control" min="1" value="<%= formData.capacity || '' %>" required />
   </div>
   <button type="submit" class="btn btn-primary">Create Event</button>
 </form>
