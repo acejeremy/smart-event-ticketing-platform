@@ -1,9 +1,7 @@
-// Reads req.session.userId (set at login) and makes the logged-in user
-// available as req.currentUser and res.locals.currentUser for every view.
-// TODO (team): once the User model exists, look it up here instead of
-// storing the whole user in the session, e.g.:
-//   const User = require('../models/User');
-//   req.currentUser = await User.findById(req.session.userId).lean();
+// Reads req.session.user (set at login with {id, name, role}) and makes
+// it available as req.currentUser and res.locals.currentUser for every
+// view. Storing these fields directly in the session avoids a database
+// lookup on every request.
 async function attachUserToLocals(req, res, next) {
   req.currentUser = req.session.user || null;
   res.locals.currentUser = req.currentUser;
