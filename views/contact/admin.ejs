@@ -2,10 +2,9 @@
 
 <h1>Enquiries</h1>
 
-<!-- TODO (team): loop over `enquiries`, allow admin to mark as read/resolved -->
 <table class="table">
   <thead>
-    <tr><th>Name</th><th>Email</th><th>Message</th><th>Received</th></tr>
+    <tr><th>Name</th><th>Email</th><th>Message</th><th>Received</th><th>Status</th><th></th></tr>
   </thead>
   <tbody>
     <% if (enquiries && enquiries.length) { %>
@@ -14,11 +13,26 @@
           <td><%= enquiry.name %></td>
           <td><%= enquiry.email %></td>
           <td><%= enquiry.message %></td>
-          <td><%= enquiry.createdAt %></td>
+          <td><%= enquiry.createdAt.toDateString() %></td>
+          <td>
+            <span class="badge <%= enquiry.status === 'new' ? 'bg-primary' : (enquiry.status === 'read' ? 'bg-secondary' : 'bg-success') %>">
+              <%= enquiry.status %>
+            </span>
+          </td>
+          <td>
+            <form action="/contact/admin/<%= enquiry._id %>/status" method="POST" class="d-flex gap-1">
+              <select name="status" class="form-select form-select-sm">
+                <option value="new" <%= enquiry.status === 'new' ? 'selected' : '' %>>New</option>
+                <option value="read" <%= enquiry.status === 'read' ? 'selected' : '' %>>Read</option>
+                <option value="resolved" <%= enquiry.status === 'resolved' ? 'selected' : '' %>>Resolved</option>
+              </select>
+              <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
+            </form>
+          </td>
         </tr>
       <% }); %>
     <% } else { %>
-      <tr><td colspan="4" class="text-muted">No enquiries yet.</td></tr>
+      <tr><td colspan="6" class="text-muted">No enquiries yet.</td></tr>
     <% } %>
   </tbody>
 </table>

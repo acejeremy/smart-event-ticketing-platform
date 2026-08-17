@@ -1,16 +1,34 @@
 const mongoose = require('mongoose');
 
-// TODO (team): design the fields for this schema to satisfy "Contact
-// Management System" / "Contact / Enquiry Management Page" from the
-// brief. Think about:
-//   - name, email, message
-//   - optional: user (ref to User, if the enquiry came from a logged-in
-//     user) vs allowing anonymous/guest enquiries
-//   - status (e.g. 'new', 'read', 'resolved') so admins can manage them
-//   - timestamps
 const enquirySchema = new mongoose.Schema(
   {
-    // fields go here
+    name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true
+    },
+    message: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    // Optional: set when a logged-in user submits the enquiry, left
+    // unset for anonymous/guest submissions.
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    status: {
+      type: String,
+      enum: ['new', 'read', 'resolved'],
+      default: 'new'
+    }
   },
   { timestamps: true }
 );
