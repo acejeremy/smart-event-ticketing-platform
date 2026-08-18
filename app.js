@@ -38,6 +38,12 @@ app.use(
 // Makes currentUser available in every EJS view without passing it manually each time
 app.use(attachUserToLocals);
 
+// Makes the current path available for highlighting the active nav link
+app.use((req, res, next) => {
+  res.locals.currentPath = req.path;
+  next();
+});
+
 // TODO (team): mount routes for each of the 5 mandatory pages
 app.use('/', eventRoutes); // Home / Event Listing
 app.use('/auth', authRoutes); // User Authentication
