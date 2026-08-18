@@ -12,14 +12,6 @@ capacity, bookings and enquiries.
 - express-session + connect-mongo (authentication/session persistence)
 - bcrypt (password hashing)
 
-## Team Members and Roles
-| Name | Role |
-|------|------|
-| TODO | Team Lead / Project Coordinator |
-| TODO | Backend Developer |
-| TODO | Frontend Developer |
-| TODO | Database Engineer |
-| TODO | Security / DevOps Engineer |
 
 ## Setup Instructions
 
