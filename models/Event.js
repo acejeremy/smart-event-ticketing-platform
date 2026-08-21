@@ -40,7 +40,18 @@ const eventSchema = new mongoose.Schema(
     capacity: {
       type: Number,
       required: true,
-      min: 1
+      min: 1,
+      validate: {
+        // Runs on every save, including updates, so an admin can't edit an
+        // event down to a capacity lower than the tickets already sold for
+        // it (which would make ticketsSold > capacity, an inconsistent
+        // state the booking logic and the remainingTickets virtual both
+        // assume can't happen).
+        validator: function capacityCoversSoldTickets(value) {
+          return value >= this.ticketsSold;
+        },
+        message: 'Capacity cannot be less than the tickets already sold for this event.'
+      }
     },
     ticketsSold: {
       type: Number,

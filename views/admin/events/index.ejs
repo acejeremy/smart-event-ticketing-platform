@@ -5,6 +5,10 @@
   <a href="/admin/events/new" class="btn btn-primary">+ New Event</a>
 </div>
 
+<% if (typeof deleteError !== 'undefined' && deleteError) { %>
+  <div class="alert alert-danger"><%= deleteError %></div>
+<% } %>
+
 <div class="table-responsive">
   <table class="table align-middle">
     <thead>
@@ -21,7 +25,7 @@
             <td><%= event.ticketsSold %></td>
             <td class="text-nowrap">
               <a href="/admin/events/<%= event._id %>/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
-              <form action="/admin/events/<%= event._id %>/delete" method="POST" class="d-inline">
+              <form action="/admin/events/<%= event._id %>/delete" method="POST" class="d-inline" onsubmit="return confirm('Delete this event? This cannot be undone.');">
                 <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
               </form>
             </td>

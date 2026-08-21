@@ -1,11 +1,19 @@
 const Event = require('../models/Event');
 
 // GET / — list upcoming events, supporting search/filter query params
-// (?category=, ?date=, ?available=). Render views/events/index.ejs.
+// (?keyword=, ?category=, ?date=, ?available=). Render views/events/index.ejs.
 async function listEvents(req, res, next) {
   try {
-    const { category, date, available } = req.query;
+    const { keyword, category, date, available } = req.query;
     const filter = { date: { $gte: new Date() } };
+
+    if (keyword) {
+      // Escape regex special characters so a keyword like "C++" or "3.5"
+      // is treated as a literal search term, not a broken/dangerous regex.
+      const escaped = keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const pattern = new RegExp(escaped, 'i');
+      filter.$or = [{ title: pattern }, { description: pattern }];
+    }
 
     if (category) {
       filter.category = category;

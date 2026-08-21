@@ -4,6 +4,15 @@
 
 <form class="row g-2 mb-4" method="GET" action="/">
   <div class="col-auto">
+    <input
+      type="text"
+      name="keyword"
+      class="form-control"
+      placeholder="Search title or description"
+      value="<%= filters.keyword || '' %>"
+    />
+  </div>
+  <div class="col-auto">
     <select name="category" class="form-select">
       <option value="">All categories</option>
       <% categories.forEach(function(cat) { %>

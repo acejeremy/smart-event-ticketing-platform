@@ -2,6 +2,7 @@
 // All routes using this controller are already protected by
 // isAuthenticated + isAdmin in the router.
 const Event = require('../models/Event');
+const Booking = require('../models/Booking');
 
 function formatValidationError(err) {
   return Object.values(err.errors)
@@ -13,7 +14,7 @@ function formatValidationError(err) {
 async function listEventsForAdmin(req, res, next) {
   try {
     const events = await Event.find().sort({ date: 1 });
-    res.render('admin/events/index', { events });
+    res.render('admin/events/index', { events, deleteError: req.query.deleteError });
   } catch (err) {
     next(err);
   }
@@ -88,9 +89,19 @@ async function updateEvent(req, res, next) {
   }
 }
 
-// DELETE/POST /admin/events/:id/delete — delete an event.
+// DELETE/POST /admin/events/:id/delete — delete an event, unless it
+// already has bookings against it (deleting it would orphan those
+// bookings and silently take away tickets people already paid for).
 async function deleteEvent(req, res, next) {
   try {
+    const hasBookings = await Booking.exists({ event: req.params.id });
+    if (hasBookings) {
+      return res.redirect(
+        '/admin/events?deleteError=' +
+          encodeURIComponent('This event has existing bookings and cannot be deleted.')
+      );
+    }
+
     await Event.findByIdAndDelete(req.params.id);
     res.redirect('/admin/events');
   } catch (err) {
