@@ -38,8 +38,19 @@ This project was completed individually rather than by a group of five.
    Then edit `.env` and set:
    - `MONGO_URI` — your Atlas connection string
    - `SESSION_SECRET` — any long random string
+   - `ADMIN_NAME` — display name for the seeded administrator
+   - `ADMIN_EMAIL` — login email for the seeded administrator
+   - `ADMIN_PASSWORD` — administrator password (minimum 8 characters)
 
-4. **Run the app in development**
+4. **Create the administrator account**
+   ```
+   npm run seed:admin
+   ```
+   This command creates the admin if the email is new. If that email already
+   belongs to a registered user, it promotes the account to admin and updates
+   its name and password. Never commit your real admin password to GitHub.
+
+5. **Run the app in development**
    ```
    npm run dev
    ```
@@ -48,7 +59,7 @@ This project was completed individually rather than by a group of five.
    npm start
    ```
 
-5. Visit `http://localhost:3000`
+6. Visit `http://localhost:3000`
 
 ## Project Structure
 ```
