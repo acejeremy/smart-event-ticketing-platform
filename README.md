@@ -1,9 +1,12 @@
 # Smart Event Management & Ticketing Platform
 
+## GitHub Repository
+https://github.com/acejeremy/smart-event-ticketing-platform
+
 ## Overview
 A full-stack event booking platform for Advanced Events (Pty) Ltd. Users can
-browse events and book tickets, admins can create/manage events and see who's
-booked what. Built for the WPR371 brief.
+browse events and book tickets, admins can manage events and view booking
+analytics and enquiries. Built for the WPR371 brief.
 
 ## Technologies Used
 - Node.js, Express.js
