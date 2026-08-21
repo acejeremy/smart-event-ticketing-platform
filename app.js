@@ -44,7 +44,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// TODO (team): mount routes for each of the 5 mandatory pages
 app.use('/', eventRoutes); // Home / Event Listing
 app.use('/auth', authRoutes); // User Authentication
 app.use('/admin/events', adminEventRoutes); // Event Management (admin only)
