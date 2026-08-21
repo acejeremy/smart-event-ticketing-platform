@@ -82,9 +82,6 @@ All five required pages work: Home/Event Listing, Auth, Event Management
 is done too (custom theme, responsive tables, mobile nav).
 
 ## Reflection
-This was supposed to be a group of five (Team Lead, Backend, Frontend,
-Database, Security/DevOps), but I ended up doing it on my own, so I basically
-had to be all five roles at once.
 
 The hardest part wasn't any single feature, it was the ticket booking logic.
 My first instinct was to check the remaining tickets, then create the
@@ -108,7 +105,7 @@ because the one the scaffold started with pulled in a dependency with a
 known critical vulnerability — easy to miss if you don't actually run
 `npm audit`.
 
-Doing this alone changed how I used Git too. No one to split branches or
+Doing this  changed how I used Git too. No one to split branches or
 review PRs with, so I just tried to keep commits scoped to one full feature
 at a time (model + controller + view together) so the history still shows
 how the project actually got built instead of one huge commit at the end.
