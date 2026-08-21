@@ -12,6 +12,12 @@ capacity, bookings and enquiries.
 - express-session + connect-mongo (authentication/session persistence)
 - bcrypt (password hashing)
 
+## Team Members and Roles
+This project was completed individually rather than by a group of five.
+
+| Name | Roles covered |
+|------|----------------|
+| Jeremy Li | Team Lead, Backend, Frontend, Database, Security/DevOps (all roles) |
 
 ## Setup Instructions
 
@@ -57,9 +63,55 @@ public/                   Static assets (CSS/JS)
 ```
 
 ## Status
-Project scaffold in place (MVC structure, routing, middleware, DB connection,
-session-based auth wiring, base views). Model fields, controller logic, and
-UI polish are in progress.
+All five mandatory pages are implemented and functional: Home/Event Listing,
+User Authentication, Event Management (admin), Booking & Dashboard, and
+Contact/Enquiry Management. Styling pass complete (custom theme, responsive
+tables, active nav state, mobile-friendly navbar).
 
 ## Reflection
-TODO
+This project was originally scoped for a group of five, covering distinct
+roles — Team Lead, Backend, Frontend, Database, Security/DevOps. I ended up
+building it on my own, which meant picking up every one of those roles
+myself instead of specializing in one, and making a lot of decisions that
+would normally have been split across a team discussion.
+
+A few things stood out from the process:
+
+- **Capacity control was the hardest technical problem, not the biggest
+  one.** It would have been easy to write "check remaining tickets, then
+  create the booking" as two separate steps, but that has a race condition:
+  two people booking the last ticket at the same instant could both pass
+  the check and both succeed, overselling the event. I used a single atomic
+  MongoDB update instead, where the update's own filter enforces
+  `ticketsSold + quantity <= capacity`, so only one of two competing
+  requests for the last ticket can actually go through. I verified this
+  wasn't just theoretical by firing five simultaneous booking requests at
+  an event with three tickets left and confirming exactly three succeeded.
+
+- **Security decisions needed to be deliberate, not default.** Two examples:
+  passwords are hashed with bcrypt via a schema-level pre-save hook so
+  there's no path through the codebase that can accidentally store one in
+  plaintext, and a failed login shows the same generic error whether the
+  email doesn't exist or the password is wrong, so the app doesn't leak
+  which emails are registered. I also had to fix a real vulnerability early
+  on — the version of bcrypt the project started with pulled in an old,
+  vulnerable build dependency, which I resolved by upgrading rather than
+  ignoring the audit warning.
+
+- **Working solo changed how I used Git.** Without teammates to split
+  branches or review pull requests with, I focused on keeping each commit
+  scoped to one complete feature — model, controller, and view together —
+  so the commit history still reads as a clear, incremental build rather
+  than one large dump at the end.
+
+- **Real infrastructure brings real friction.** Setting up MongoDB Atlas
+  meant working through an actual DNS resolution issue between Node's
+  resolver and my router, rather than everything just working on the first
+  try. Debugging that — and later a couple of "why isn't this working"
+  moments that turned out to be a stale browser view rather than a bug in
+  the code — was a good reminder to verify against the real, running
+  system instead of assuming from the code alone.
+
+Doing every role myself meant no specialization, but it also meant I
+understand the full system end to end — there's no part of this project I
+could point to and say "someone else built that."
