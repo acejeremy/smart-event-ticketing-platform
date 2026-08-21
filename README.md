@@ -1,9 +1,9 @@
 # Smart Event Management & Ticketing Platform
 
 ## Overview
-A full-stack event booking platform built for Advanced Events (Pty) Ltd, allowing
-users to browse and book event tickets, and administrators to manage events,
-capacity, bookings and enquiries.
+A full-stack event booking platform for Advanced Events (Pty) Ltd. Users can
+browse events and book tickets, admins can create/manage events and see who's
+booked what. Built for the WPR371 brief.
 
 ## Technologies Used
 - Node.js, Express.js
@@ -74,55 +74,50 @@ public/                   Static assets (CSS/JS)
 ```
 
 ## Status
-All five mandatory pages are implemented and functional: Home/Event Listing,
-User Authentication, Event Management (admin), Booking & Dashboard, and
-Contact/Enquiry Management. Styling pass complete (custom theme, responsive
-tables, active nav state, mobile-friendly navbar).
+All five required pages work: Home/Event Listing, Auth, Event Management
+(admin), Booking & Dashboard, and Contact/Enquiry Management. Styling pass
+is done too (custom theme, responsive tables, mobile nav).
 
 ## Reflection
-This project was originally scoped for a group of five, covering distinct
-roles — Team Lead, Backend, Frontend, Database, Security/DevOps. I ended up
-building it on my own, which meant picking up every one of those roles
-myself instead of specializing in one, and making a lot of decisions that
-would normally have been split across a team discussion.
+This was supposed to be a group of five (Team Lead, Backend, Frontend,
+Database, Security/DevOps), but I ended up doing it on my own, so I basically
+had to be all five roles at once.
 
-A few things stood out from the process:
+The hardest part wasn't any single feature, it was the ticket booking logic.
+My first instinct was to check the remaining tickets, then create the
+booking — but that's actually broken if two people try to book the last
+ticket at the same time, since both requests could pass the check before
+either one writes anything, and you'd oversell the event. I ended up doing
+it as one atomic MongoDB update instead, where the filter itself checks
+`ticketsSold + quantity <= capacity` before it lets the increment happen.
+Tested it by firing 5 booking requests at once against an event with only 3
+tickets left, and only 3 went through, so it actually works under real
+concurrency and not just in the normal case.
 
-- **Capacity control was the hardest technical problem, not the biggest
-  one.** It would have been easy to write "check remaining tickets, then
-  create the booking" as two separate steps, but that has a race condition:
-  two people booking the last ticket at the same instant could both pass
-  the check and both succeed, overselling the event. I used a single atomic
-  MongoDB update instead, where the update's own filter enforces
-  `ticketsSold + quantity <= capacity`, so only one of two competing
-  requests for the last ticket can actually go through. I verified this
-  wasn't just theoretical by firing five simultaneous booking requests at
-  an event with three tickets left and confirming exactly three succeeded.
+A few other things worth mentioning:
 
-- **Security decisions needed to be deliberate, not default.** Two examples:
-  passwords are hashed with bcrypt via a schema-level pre-save hook so
-  there's no path through the codebase that can accidentally store one in
-  plaintext, and a failed login shows the same generic error whether the
-  email doesn't exist or the password is wrong, so the app doesn't leak
-  which emails are registered. I also had to fix a real vulnerability early
-  on — the version of bcrypt the project started with pulled in an old,
-  vulnerable build dependency, which I resolved by upgrading rather than
-  ignoring the audit warning.
+Passwords are hashed with bcrypt through a pre-save hook on the User model,
+so there's no code path that could accidentally save one in plaintext.
+Login also gives the same "invalid email or password" message whether the
+email doesn't exist or the password's wrong, so it doesn't leak which
+emails are registered. I also had to bump the bcrypt version early on
+because the one the scaffold started with pulled in a dependency with a
+known critical vulnerability — easy to miss if you don't actually run
+`npm audit`.
 
-- **Working solo changed how I used Git.** Without teammates to split
-  branches or review pull requests with, I focused on keeping each commit
-  scoped to one complete feature — model, controller, and view together —
-  so the commit history still reads as a clear, incremental build rather
-  than one large dump at the end.
+Doing this alone changed how I used Git too. No one to split branches or
+review PRs with, so I just tried to keep commits scoped to one full feature
+at a time (model + controller + view together) so the history still shows
+how the project actually got built instead of one huge commit at the end.
 
-- **Real infrastructure brings real friction.** Setting up MongoDB Atlas
-  meant working through an actual DNS resolution issue between Node's
-  resolver and my router, rather than everything just working on the first
-  try. Debugging that — and later a couple of "why isn't this working"
-  moments that turned out to be a stale browser view rather than a bug in
-  the code — was a good reminder to verify against the real, running
-  system instead of assuming from the code alone.
+Setting up MongoDB Atlas wasn't as plug-and-play as I expected either — hit
+a weird DNS issue where Node couldn't resolve the connection string even
+though my system could, had to switch to the non-SRV connection string to
+get around it. Also had a couple of "why isn't this working" moments that
+turned out to just be a stale browser tab and not an actual bug, which was
+a good reminder to double check against the running app instead of just
+assuming from the code.
 
-Doing every role myself meant no specialization, but it also meant I
-understand the full system end to end — there's no part of this project I
-could point to and say "someone else built that."
+Not having a team meant no one to bounce ideas off, but it also meant I
+touched every part of this project myself, so there's nothing in here I
+can't explain.
