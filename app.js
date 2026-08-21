@@ -1,5 +1,12 @@
 require('dotenv').config();
 
+if (!process.env.MONGO_URI || !process.env.SESSION_SECRET) {
+  console.error(
+    'Missing required environment variables. Copy .env.example to .env and set MONGO_URI and SESSION_SECRET before starting the server.'
+  );
+  process.exit(1);
+}
+
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
