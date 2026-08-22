@@ -118,6 +118,3 @@ turned out to just be a stale browser tab and not an actual bug, which was
 a good reminder to double check against the running app instead of just
 assuming from the code.
 
-Not having a team meant no one to bounce ideas off, but it also meant I
-touched every part of this project myself, so there's nothing in here I
-can't explain.
